@@ -1,0 +1,53 @@
+---
+title: "Вторая лаб. №11. Костина Н"
+output:
+  html_document:
+    df_print: paged
+---
+*Используйте файл RH_T.csv 
+Напишите функцию, которая находит 2 соседних дня с максимальным перепадом температуры*
+
+Читаем данные:
+```{r}
+data <- read.csv("./RH_T.csv")
+data
+```
+
+
+В переменную ```index``` записываем массив индексов. В ```max_diff``` записываем ноль, как в принципе минимально возможное значение модуля числа. В ```ans_index``` записываем ```-1```
+```{r}
+index <- rownames(data)
+len_index <- length(index)
+max_diff = 0
+ans_index <- -1
+```
+
+
+Ищем максимально возможный перепад температуры. Также дополнительно проверяем, что дни, которые идут подряд в датафрейме, также идут подряд хронологически.
+```{r}
+for (i in 1:(len_index - 1)) {
+  cur_index <- index[i]
+  next_index <- index[i + 1]
+  
+  cur_date <- as.Date(data[cur_index, 'YYYYMMDD'])
+  next_date <- as.Date(data[next_index, 'YYYYMMDD'])
+
+  cur_t <- data[cur_index, 'T2M']
+  next_t <- data[next_index, 'T2M']
+  
+  if (cur_date + 1 == next_date) {
+    abs_diff <- abs(cur_t - next_t)
+    if (abs_diff > max_diff) {
+      max_diff <- abs_diff
+      ans_index <- i
+    }
+  }
+}
+
+```
+
+Ответ:
+```{r}
+data[ans_index:(ans_index + 1), 1:11]
+```
+
